@@ -59,21 +59,21 @@ This project demonstrates real-world AI workflow orchestration: OAuth2 authentic
 <br/>
 
 ```
-Gmail Inbox
-     │
-     ▼
-┌─────────────────┐
-│  Email Fetcher  │  ← Gmail API v1 (OAuth2)
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Email Parser   │  ← Extracts headers, body, metadata
-└────────┬────────┘
-         │
-         ▼
+                    Gmail Inbox
+                        │
+                        ▼
+               ┌─────────────────┐
+               │  Email Fetcher  │  ← Gmail API v1 (OAuth2)
+               └────────┬────────┘
+                        │
+                        ▼
+               ┌─────────────────┐
+               │  Email Parser   │  ← Extracts headers, body, metadata
+               └────────┬────────┘
+                        │
+                        ▼
 ┌────────────────────────────────────────────────────┐
-│                AI Processing Layer                  │
+│                AI Processing Layer                 │
 │  ┌─────────────┐  ┌─────────────┐                  │
 │  │ Summarizer  │  │ Classifier  │                  │
 │  └─────────────┘  └─────────────┘                  │
