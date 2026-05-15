@@ -38,7 +38,7 @@
 <p align="center">
    <img src="assets/demo.gif" width="90%" alt="AI Email Assistant Demo"/>
 </p>
-</a>
+</a> 
 
 
 
