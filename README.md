@@ -33,7 +33,7 @@
 
 | Gmail Monitoring | Telegram Alert | Analytics Dashboard |
 |:-:|:-:|:-:|
-| <img src="https://placehold.co/280x180/1a1a2e/ffffff?text=Terminal+Output" width="280"/> | <img src="https://placehold.co/280x180/1a1a2e/ffffff?text=Telegram+Notification" width="280"/> | <img src="https://placehold.co/280x180/1a1a2e/ffffff?text=Streamlit+Dashboard" width="280"/> |
+| <img src="assets/terminal.png" width="280"/> | <img src="assets/telegram.png" width="280"/> | <img src="assets/dashboard.png" width="280"/> |
 
 </div>
 ---
