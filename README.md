@@ -41,7 +41,7 @@
 | <img src="assets/terminal.png" width="280"/> | <img src="assets/telegram.png" width="280"/> | <img src="assets/dashboard.png" width="280"/> |
 
 </div>
----
+
 
 ## Overview
 
