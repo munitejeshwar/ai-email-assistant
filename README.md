@@ -35,8 +35,10 @@
 
 <a href="#">
   <img src="https://placehold.co/900x480/0f0c29/ffffff?text=Demo+Video+%E2%86%92+Click+to+Watch" alt="Demo Video" style="border-radius: 12px; border: 1px solid #302b63;" width="80%"/>
-</a>
 <img width="800" height="450" alt="demo-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/2247551c-650d-4fcd-91a7-c796a175f7e5" />
+
+</a>
+
 
 
 
