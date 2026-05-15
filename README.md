@@ -23,26 +23,11 @@
 
 <br/>
 
-</div>
-
----
-
-## Demo
-
 <div align="center">
 
-> 📹 **Demo walkthrough** — replace with your screen recording or GIF
+> 📹 **Demo walkthrough -**
 
-<a href="#">
-  <img src="https://placehold.co/900x480/0f0c29/ffffff?text=Demo+Video+%E2%86%92+Click+to+Watch" alt="Demo Video" style="border-radius: 12px; border: 1px solid #302b63;" width="80%"/>
-<p align="center">
-   <img src="assets/demo.gif" width="90%" alt="AI Email Assistant Demo"/>
-</p>
-</a> 
-
- 
-
-
+<img src="assets/demo.gif" width="80%" alt="AI Email Assistant Demo"/>
 
 <br/><br/>
 
@@ -51,7 +36,6 @@
 | <img src="https://placehold.co/280x180/1a1a2e/ffffff?text=Terminal+Output" width="280"/> | <img src="https://placehold.co/280x180/1a1a2e/ffffff?text=Telegram+Notification" width="280"/> | <img src="https://placehold.co/280x180/1a1a2e/ffffff?text=Streamlit+Dashboard" width="280"/> |
 
 </div>
-
 ---
 
 ## Overview
