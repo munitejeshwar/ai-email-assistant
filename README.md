@@ -37,6 +37,10 @@
   <img src="https://placehold.co/900x480/0f0c29/ffffff?text=Demo+Video+%E2%86%92+Click+to+Watch" alt="Demo Video" style="border-radius: 12px; border: 1px solid #302b63;" width="80%"/>
 </a>
 
+https://github.com/user-attachments/assets/4e446da6-a79e-470b-b213-8aec58072acf
+
+
+
 <br/><br/>
 
 | Gmail Monitoring | Telegram Alert | Analytics Dashboard |
