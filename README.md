@@ -36,7 +36,7 @@
 <a href="#">
   <img src="https://placehold.co/900x480/0f0c29/ffffff?text=Demo+Video+%E2%86%92+Click+to+Watch" alt="Demo Video" style="border-radius: 12px; border: 1px solid #302b63;" width="80%"/>
 <p align="center">
-  <img src="assets/demo.gif" width="90%" alt="AI Email Assistant Demo"/>
+   <img src="assets/demo.gif" width="90%" alt="AI Email Assistant Demo"/>
 </p>
 </a>
 
