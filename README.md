@@ -54,11 +54,7 @@ This project demonstrates real-world AI workflow orchestration: OAuth2 authentic
 
 ## Architecture
 
-<div align="center">
-
-<img src="https://placehold.co/860x500/0f0c29/ffffff?text=Architecture+Diagram+%E2%86%92+Replace+with+draw.io+export" alt="Architecture Diagram" width="80%"/>
-
-</div>
+<div align="center"></div>
 
 <br/>
 
