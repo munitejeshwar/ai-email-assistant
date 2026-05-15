@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+
+.env
+token.json
+tokens.json
+credentials.json
+emails.db
