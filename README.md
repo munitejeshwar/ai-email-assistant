@@ -98,6 +98,7 @@ ai-email-assistant/
 ├── monitor.py
 ├── requirements.txt
 ├── README.md
+```
 
 
  Installation
@@ -176,5 +177,3 @@ GitHub:
 https://github.com/munitejeshwar
 
 
-After saving:
-```
