@@ -24,7 +24,7 @@
 <br/>
 
 <div align="center">
----
+
 
 > 📹 **Demo walkthrough -**
 
