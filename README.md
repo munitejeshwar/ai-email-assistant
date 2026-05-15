@@ -136,7 +136,10 @@ Continuous Monitoring
 python monitor.py
 Launch Dashboard
 streamlit run dashboard/app.py
- Screenshots
+
+
+#Screenshots:
+
 Dashboard
 <img width="1919" height="697" alt="image" src="https://github.com/user-attachments/assets/ff420e5e-9710-4420-b0c6-8f5ca32f525e" />
 <img width="1916" height="918" alt="image" src="https://github.com/user-attachments/assets/0ada1c6f-6e80-4bf6-b8f2-7d28e7612e3c" />
