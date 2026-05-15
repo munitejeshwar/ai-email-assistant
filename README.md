@@ -138,7 +138,7 @@ Launch Dashboard
 streamlit run dashboard/app.py
 
 
-#Screenshots:
+# Screenshots:
 
 Dashboard
 <img width="1919" height="697" alt="image" src="https://github.com/user-attachments/assets/ff420e5e-9710-4420-b0c6-8f5ca32f525e" />
