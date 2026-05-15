@@ -27,11 +27,10 @@
 
 ---
 
-## 🎥 Demo
 
 <div align="center">
 
-> 📹 **Demo walkthrough**
+>## Demo walkthrough
 
 <img src="assets/demo.gif" width="80%" alt="AI Email Assistant Demo"/>
 
