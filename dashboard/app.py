@@ -248,26 +248,34 @@ if page == "📥 Approval Center":
     can_reject  = current_status in [WorkflowStatus.PENDING, WorkflowStatus.DRAFT_SAVED,
                                      WorkflowStatus.GMAIL_DRAFT_SAVED]
 
-    btn_col1, btn_col2, btn_col3, btn_col_r = st.columns([2, 2, 2, 1])
+    btn_col1, btn_col2, btn_col3, btn_col4, _ = st.columns([2, 2, 2, 2, 1])
+
+    # Compute to_email once for all buttons that need it
+    sender_raw = email.get("sender", "")
+    to_email   = sender_raw.split("<")[-1].replace(">", "").strip() if "<" in sender_raw else sender_raw
+    subject    = email.get("subject", "")
 
     with btn_col1:
         if can_approve:
-            if st.button("✅ Approve & Mark for Send", type="primary",
+            if st.button("✅ Approve & Send", type="primary",
                          use_container_width=True, key=f"approve_{email['id']}"):
                 try:
                     workflow.approve_and_send(email["id"], edited_reply, from_status=current_status)
-                    st.success("✅ Approved! Email marked for sending. (Gmail send: Phase 5)")
+                    st.success("✅ Approved and sent! Status → SENT.")
+                    st.rerun()
+                except RuntimeError as exc:
+                    # Send failed — parked at APPROVED, user can retry
+                    st.warning(str(exc))
                     st.rerun()
                 except Exception as exc:
-                    st.error(f"Error: {exc}")
+                    st.error(f"Unexpected error: {exc}")
         else:
-            st.button("✅ Approve", disabled=True, use_container_width=True)
+            st.button("✅ Approve & Send", disabled=True, use_container_width=True)
 
     with btn_col2:
         if can_draft:
             if st.button("💾 Save Draft", use_container_width=True, key=f"draft_{email['id']}"):
                 try:
-                    # Persist any edits first
                     update_email_status(email["id"], current_status, user_edited_reply=edited_reply)
                     workflow.save_as_draft(email["id"], from_status=current_status)
                     st.success("💾 Draft saved.")
@@ -278,15 +286,33 @@ if page == "📥 Approval Center":
             st.button("💾 Save Draft", disabled=True, use_container_width=True)
 
     with btn_col3:
+        can_gmail_draft = current_status in [WorkflowStatus.PENDING, WorkflowStatus.DRAFT_SAVED]
+        if can_gmail_draft:
+            if st.button("📤 Push to Gmail Drafts", use_container_width=True,
+                         key=f"gmail_draft_{email['id']}"):
+                try:
+                    update_email_status(email["id"], current_status, user_edited_reply=edited_reply)
+                    draft_id = workflow.push_to_gmail_drafts(
+                        email["id"], to_email, subject, edited_reply,
+                        from_status=current_status,
+                    )
+                    st.success(f"📤 Pushed to Gmail Drafts (ID: {draft_id}).")
+                    st.rerun()
+                except Exception as exc:
+                    st.error(f"Gmail Draft error: {exc}")
+        else:
+            st.button("📤 Push to Gmail Drafts", disabled=True, use_container_width=True)
+
+    with btn_col4:
         if can_reject:
-            reject_reason = st.text_input("Rejection reason (optional)",
+            reject_reason = st.text_input("Reason (optional)",
                                           key=f"reject_reason_{email['id']}",
-                                          placeholder="Optional reason…",
+                                          placeholder="Rejection reason…",
                                           label_visibility="collapsed")
             if st.button("❌ Reject", use_container_width=True, key=f"reject_{email['id']}"):
                 try:
                     workflow.reject(email["id"], reason=reject_reason, from_status=current_status)
-                    st.success("❌ Email rejected.")
+                    st.success("❌ Rejected.")
                     st.rerun()
                 except Exception as exc:
                     st.error(f"Error: {exc}")
@@ -389,12 +415,19 @@ elif page == "🕐 Decision Timeline":
 
     if df.empty:
         st.info(
-            "No timeline events recorded yet.\n\n"
-            "The Decision Timeline will populate once the audit logger is wired in Phase 5. "
-            "Each approval, rejection, and draft save will appear here in chronological order."
+            "No timeline events yet.\n\n"
+            "Events populate automatically as emails move through the workflow "
+            "(approve, reject, save draft, send)."
         )
     else:
-        st.dataframe(df, use_container_width=True, hide_index=True)
+        # Show most recent first; highlight per-email with expanders
+        for email_id in df["email_id"].unique():
+            sub = df[df["email_id"] == email_id].reset_index(drop=True)
+            first_event = sub.iloc[-1]  # oldest
+            label = f"📧 {email_id[:16]}… — {len(sub)} events"
+            with st.expander(label):
+                st.dataframe(sub[["created_at", "event", "actor", "note"]],
+                             use_container_width=True, hide_index=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -406,13 +439,14 @@ elif page == "📋 Audit Log":
 
     if df.empty:
         st.info(
-            "No audit events recorded yet.\n\n"
-            "The Audit Log will populate once the audit logger is wired in Phase 5. "
-            "Every human action (approve, reject, edit) and AI action (generate, analyse) "
-            "will be logged here with actor, timestamp, and action details."
+            "No audit events yet.\n\n"
+            "The Audit Log populates automatically as the workflow runs. "
+            "Every AI and human action is recorded here."
         )
     else:
         st.dataframe(df, use_container_width=True, hide_index=True)
 
-    st.divider()
-    st.caption("All human actions and AI decisions will be permanently logged here for transparency and reproducibility.")
+    st.caption(
+        "All AI and human actions are permanently logged here "
+        "for transparency, reproducibility, and HITL audit compliance."
+    )

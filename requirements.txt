@@ -1,7 +1,9 @@
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
-google-generativeai
 python-dotenv
 beautifulsoup4
 requests
+openai
+streamlit
+pandas
