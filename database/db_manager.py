@@ -15,6 +15,9 @@
 #   save_email(email_data)     — legacy persistence (backward compatible)
 #   save_envelope(envelope)    — new HITL persistence via DecisionEnvelope
 #   email_exists(email_id)     — deduplication check
+#   get_email_by_id(id)        — fetch a single email row as dict
+#   update_email_status(id, status, **fields) — workflow state transitions
+#   get_emails(**filters)      — filtered query for dashboard tables
 #
 # DB_PATH is read from the environment for consistency with every other
 # module in the project. Fallback: "emails.db".
@@ -203,3 +206,81 @@ def email_exists(email_id: str) -> bool:
     conn.close()
 
     return result is not None
+
+
+# ---------------------------------------------------------------------------
+# Dashboard query helpers
+# ---------------------------------------------------------------------------
+
+# Columns that workflow transitions are allowed to update.
+# Whitelist prevents accidental or malicious writes to immutable fields.
+_UPDATABLE_COLUMNS = frozenset({
+    "status", "user_edited_reply", "rejection_reason",
+    "gmail_draft_id", "approved_at", "rejected_at", "sent_at", "draft_saved_at",
+})
+
+
+def get_email_by_id(email_id: str) -> dict | None:
+    """Returns a single email row as a dict, or None if not found."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    row = conn.execute(
+        "SELECT * FROM processed_emails WHERE id = ?", (email_id,)
+    ).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def update_email_status(email_id: str, new_status: str, **extra_fields) -> None:
+    """
+    Updates the status (and optional workflow fields) for a single email.
+    Only columns in _UPDATABLE_COLUMNS may be set via extra_fields.
+    """
+    safe = {k: v for k, v in extra_fields.items() if k in _UPDATABLE_COLUMNS}
+    safe["status"] = new_status
+    set_clause = ", ".join(f"{col} = ?" for col in safe)
+    values = list(safe.values()) + [email_id]
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute(
+        f"UPDATE processed_emails SET {set_clause} WHERE id = ?", values
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_emails(
+    search: str = "",
+    status_filter: str = "All",
+    category_filter: str = "All",
+    risk_filter: str = "All",
+    sender_filter: str = "",
+    limit: int = 200,
+) -> list[dict]:
+    """
+    Returns a filtered list of email rows (dicts) for the dashboard.
+    All filters are optional; omitting them returns all rows.
+    """
+    query = "SELECT * FROM processed_emails WHERE 1=1"
+    params: list = []
+    if search:
+        query += " AND (subject LIKE ? OR sender LIKE ? OR summary LIKE ?)"
+        like = f"%{search}%"
+        params += [like, like, like]
+    if status_filter and status_filter != "All":
+        query += " AND status = ?"
+        params.append(status_filter)
+    if category_filter and category_filter != "All":
+        query += " AND category = ?"
+        params.append(category_filter)
+    if risk_filter and risk_filter != "All":
+        query += " AND risk_level = ?"
+        params.append(risk_filter)
+    if sender_filter:
+        query += " AND sender LIKE ?"
+        params.append(f"%{sender_filter}%")
+    query += f" ORDER BY processed_at DESC LIMIT {int(limit)}"
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(query, params).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]

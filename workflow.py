@@ -204,72 +204,54 @@ def submit_email(envelope) -> object:
 
 def approve_and_send(email_id: str, reply_text: str, from_status: str = "PENDING") -> None:
     """
-    Approves a pending draft reply and sends it via Gmail.
-
-    Transition: PENDING | DRAFT_SAVED | GMAIL_DRAFT_SAVED → APPROVED → SENT
-
-    Planned behaviour:
-        1. _validate_transition(from_status, WorkflowStatus.APPROVED)
-        2. Update status to APPROVED; set approved_at timestamp.
-        3. Call drafts/gmail_sender.send_email() with reply_text.
-        4. Update status to SENT; set sent_at timestamp.
-        5. Log APPROVED and SENT to audit_log and decision_timeline.
-        6. Send Telegram confirmation.
-
-    Raises:
-        NotImplementedError: until Phase 4 dashboard implementation.
-        PermissionError: if from_status cannot transition to APPROVED.
+    Approves a draft reply and marks it APPROVED.
+    Actual Gmail send is wired in Phase 5; status transitions immediately.
+    Transition: PENDING | DRAFT_SAVED | GMAIL_DRAFT_SAVED → APPROVED
     """
-    _validate_transition(from_status, WorkflowStatus.APPROVED)   # guard runs now
-    raise NotImplementedError(
-        "approve_and_send() is not yet implemented. "
-        "Will be wired in Phase 4 (Streamlit Approval Center)."
+    from database.db_manager import update_email_status
+    from datetime import datetime
+    _validate_transition(from_status, WorkflowStatus.APPROVED)
+    update_email_status(
+        email_id,
+        WorkflowStatus.APPROVED.value,
+        user_edited_reply=reply_text,
+        approved_at=datetime.now().isoformat(),
     )
+    logger.info("Workflow: email id='%s' APPROVED. Phase 5 will trigger Gmail send.", email_id)
+    # TODO Phase 5: drafts.gmail_sender.send_email(); then update_email_status(id, SENT)
 
 
 def reject(email_id: str, reason: str = "", from_status: str = "PENDING") -> None:
     """
     Rejects a pending draft — no email is sent.
-
     Transition: PENDING | DRAFT_SAVED | GMAIL_DRAFT_SAVED → REJECTED
-
-    Planned behaviour:
-        1. _validate_transition(from_status, WorkflowStatus.REJECTED)
-        2. Update status to REJECTED; set rejected_at; store rejection_reason.
-        3. Log REJECTED to audit_log and decision_timeline.
-        4. Optionally send Telegram rejection confirmation.
-
-    Raises:
-        NotImplementedError: until Phase 4 dashboard implementation.
-        PermissionError: if from_status cannot transition to REJECTED.
     """
-    _validate_transition(from_status, WorkflowStatus.REJECTED)   # guard runs now
-    raise NotImplementedError(
-        "reject() is not yet implemented. "
-        "Will be wired in Phase 4 (Streamlit Approval Center)."
+    from database.db_manager import update_email_status
+    from datetime import datetime
+    _validate_transition(from_status, WorkflowStatus.REJECTED)
+    update_email_status(
+        email_id,
+        WorkflowStatus.REJECTED.value,
+        rejection_reason=reason,
+        rejected_at=datetime.now().isoformat(),
     )
+    logger.info("Workflow: email id='%s' REJECTED. Reason: %s", email_id, reason)
 
 
 def save_as_draft(email_id: str, from_status: str = "PENDING") -> None:
     """
-    Saves the AI-generated draft for later review without sending.
-
+    Saves the draft for later review — no email sent.
     Transition: PENDING → DRAFT_SAVED
-
-    Planned behaviour:
-        1. _validate_transition(from_status, WorkflowStatus.DRAFT_SAVED)
-        2. Update status to DRAFT_SAVED; set draft_saved_at timestamp.
-        3. Log DRAFT_SAVED to audit_log and decision_timeline.
-
-    Raises:
-        NotImplementedError: until Phase 4 dashboard implementation.
-        PermissionError: if from_status cannot transition to DRAFT_SAVED.
     """
-    _validate_transition(from_status, WorkflowStatus.DRAFT_SAVED)  # guard runs now
-    raise NotImplementedError(
-        "save_as_draft() is not yet implemented. "
-        "Will be wired in Phase 4 (Streamlit Approval Center)."
+    from database.db_manager import update_email_status
+    from datetime import datetime
+    _validate_transition(from_status, WorkflowStatus.DRAFT_SAVED)
+    update_email_status(
+        email_id,
+        WorkflowStatus.DRAFT_SAVED.value,
+        draft_saved_at=datetime.now().isoformat(),
     )
+    logger.info("Workflow: email id='%s' saved as DRAFT_SAVED.", email_id)
 
 
 def push_to_gmail_drafts(
