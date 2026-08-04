@@ -7,7 +7,7 @@ from email_engine.parser import parse_email
 
 from ai_processing.summarizer import summarize_email
 from ai_processing.classifier import classify_email
-from ai_processing.priority import analyze_priority
+from ai_processing.priority_analyzer import analyze_priority
 
 from database.db_manager import (
     init_db,

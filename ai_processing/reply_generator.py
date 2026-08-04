@@ -1,58 +1,28 @@
-from openai import OpenAI
-from dotenv import load_dotenv
+# ai_processing/reply_generator.py
+#
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║  DEPRECATED — DO NOT USE IN NEW CODE                            ║
+# ║                                                                  ║
+# ║  This module is a duplicate of drafts/reply_generator.py        ║
+# ║  and will be deleted once all imports have been confirmed        ║
+# ║  migrated to the canonical location.                            ║
+# ║                                                                  ║
+# ║  Migration path:                                                 ║
+# ║    OLD: from ai_processing.reply_generator import generate_reply ║
+# ║    NEW: from drafts.reply_generator import generate_reply        ║
+# ╚══════════════════════════════════════════════════════════════════╝
 
-import os
+import warnings
 
-load_dotenv()
-
-client = OpenAI(
-    api_key=os.getenv("OPENROUTER_API_KEY"), base_url="https://openrouter.ai/api/v1"
+warnings.warn(
+    "ai_processing.reply_generator is deprecated and will be removed. "
+    "Import from drafts.reply_generator instead.",
+    DeprecationWarning,
+    stacklevel=2,
 )
 
+# Re-export the canonical implementation so any accidental import
+# continues to work without silently running stale code.
+from drafts.reply_generator import generate_reply  # noqa: F401, E402
 
-def generate_reply(sender, subject, body):
-
-    prompt = f"""
-You are Muni's personal AI email assistant.
-
-Generate a SHORT friendly human-like email reply.
-Answer their message.
-
-IMPORTANT RULES:
-- Reply as muni' AI assistent 
-- Sound natural
-- Friendly tone
-- Keep under 5 sentences
-- Never sound robotic
-- Do not use corporate language
-- Reply casually if friend-like message
-- If someone asks for contact details,
-  Instagram,
-  social media,
-  or faster communication,
-  include:
-
-Instagram:
-@muni_tejeshwar
-
-Also mention:
-"Thank you for contacting Muni. This AI assistant received your email successfully.
-Muni will respond shortly"
-
-EMAIL DETAILS:
-
-FROM:
-{sender}
-
-SUBJECT:
-{subject}
-
-BODY:
-{body}
-"""
-
-    response = client.chat.completions.create(
-        model="openai/gpt-4o-mini", messages=[{"role": "user", "content": prompt}]
-    )
-
-    return response.choices[0].message.content.strip()
+__all__ = ["generate_reply"]

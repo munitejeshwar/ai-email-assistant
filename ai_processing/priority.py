@@ -1,47 +1,28 @@
-from openai import OpenAI
-from dotenv import load_dotenv
-import os
+# ai_processing/priority.py
+#
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║  DEPRECATED — DO NOT USE IN NEW CODE                            ║
+# ║                                                                  ║
+# ║  This module is a duplicate of ai_processing/priority_analyzer  ║
+# ║  and will be deleted once all imports have been migrated.        ║
+# ║                                                                  ║
+# ║  Migration path:                                                 ║
+# ║    OLD: from ai_processing.priority import analyze_priority      ║
+# ║    NEW: from ai_processing.priority_analyzer import              ║
+# ║             analyze_priority                                     ║
+# ╚══════════════════════════════════════════════════════════════════╝
 
-load_dotenv()
+import warnings
 
-client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY")
+warnings.warn(
+    "ai_processing.priority is deprecated and will be removed. "
+    "Import from ai_processing.priority_analyzer instead.",
+    DeprecationWarning,
+    stacklevel=2,
 )
 
+# Re-export the canonical implementation so existing callers continue to
+# work without modification until their imports are updated (Phase 0, Step 5).
+from ai_processing.priority_analyzer import analyze_priority  # noqa: F401, E402
 
-def analyze_priority(subject, body):
-
-    prompt = f"""
-    Analyze this email carefully.
-
-    Determine:
-
-    1. PRIORITY SCORE (1-10)
-    2. URGENCY (LOW, MEDIUM, HIGH)
-    3. ACTION NEEDED? (YES or NO)
-
-    EMAIL SUBJECT:
-    {subject}
-
-    EMAIL BODY:
-    {body[:2000]}
-
-    Return EXACTLY in this format:
-
-    PRIORITY: X/10
-    URGENCY: LOW/MEDIUM/HIGH
-    ACTION: YES/NO
-    """
-
-    response = client.chat.completions.create(
-        model="openai/gpt-4o-mini",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
-
-    return response.choices[0].message.content
+__all__ = ["analyze_priority"]
