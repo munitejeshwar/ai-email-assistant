@@ -24,7 +24,7 @@ import workflow
 from workflow import WorkflowStatus
 from database.db_manager import (
     init_db, DB_PATH,
-    get_emails, get_email_by_id, update_email_status,
+    get_emails, update_email_status,
 )
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -423,11 +423,11 @@ elif page == "🕐 Decision Timeline":
         # Show most recent first; highlight per-email with expanders
         for email_id in df["email_id"].unique():
             sub = df[df["email_id"] == email_id].reset_index(drop=True)
-            first_event = sub.iloc[-1]  # oldest
             label = f"📧 {email_id[:16]}… — {len(sub)} events"
             with st.expander(label):
                 st.dataframe(sub[["created_at", "event", "actor", "note"]],
                              use_container_width=True, hide_index=True)
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────
